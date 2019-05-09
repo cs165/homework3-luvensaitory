@@ -10,6 +10,12 @@
 class FlashcardScreen {
     constructor(containerElement, menu) {
         this.containerElement = containerElement;
+        this.right = 0;
+        this.wrong = 0;
+        const R = document.querySelector(".status .correct");
+        R.textContent = 0;
+        const W = document.querySelector(".status .incorrect");
+        W.textContent = 0;
     }
 
     show(words) {

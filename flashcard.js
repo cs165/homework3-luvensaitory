@@ -15,7 +15,7 @@ class Flashcard {
         this.containerElement.append(this.flashcardElement);
 
         this.flashcardElement.addEventListener('pointerup', this._flipCard);
-        // this.cardStart = this.cardStart.bind(this);
+        this.cardStart = this.cardStart.bind(this);
         this.cardDrag = this.cardDrag.bind(this);
         this.cardEnd = this.cardEnd.bind(this);
         this.originX = null;
@@ -30,24 +30,48 @@ class Flashcard {
     cardStart(event) {
         this.originX = event.clientX;
         this.originY = event.clientY;
-        this.cardStart = true;
+        this.cardStarted = true;
         event.currentTarget.setPointerCapture(event.pointerId);
+        this.tempRight = document.querySelector(".status .correct").textContent;
+        this.tempWrong = document.querySelector(".status .incorrect").textContent;
+        event.currentTarget.style.removeProperty('transition-duration');
     }
     cardDrag(event) {
         if (!this.cardStarted) {
             return;
         }
+        this.flashcardElement.removeEventListener('pointerup', this._flipCard);
         event.preventDefault();
         const deltaX = event.clientX - this.originX;
         const deltaY = event.clientY - this.originY;
-        const translateX = this.offsetX + deltaX;
-        const translateY = this.offsetY + deltaY;
-        event.currentTarget.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px)';
+        const translateX = deltaX;
+        const translateY = deltaY;
+        // console.log("delX: " + deltaX + " delY: " + deltaY + " tranX: " + translateX + " tranY: " + translateY);
+        event.currentTarget.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) rotate(' + deltaX * 0.2 + 'deg)';
+        event.currentTarget.style.rotate
+        const tR = document.querySelector(".status .correct");
+        const tW = document.querySelector(".status .incorrect");
+        if (translateX >= 150 || translateX <= -150) {
+            document.querySelector("body").style.backgroundColor = "#97b7b7";
+            if (translateX >= 150) {
+                tR.textContent = parseInt(this.tempRight) + 1;
+            } else {
+                tW.textContent = parseInt(this.tempWrong) + 1;
+            }
+        } else {
+            document.querySelector("body").style.backgroundColor = "#d0e6df";
+            tR.textContent = this.tempRight;
+            tW.textContent = this.tempWrong;
+        }
     }
     cardEnd(event) {
         this.cardStarted = false;
         this.offsetX += event.clientX - this.originX;
         this.offsetY += event.clientY - this.originY;
+        event.currentTarget.style.transform = 'translate(' + 0 + 'px, ' + 0 + 'px)';
+        event.currentTarget.style.transitionDuration = '0.6s';
+        this.flashcardElement.addEventListener('pointerup', this._flipCard);
+        document.querySelector("body").style.backgroundColor = "#d0e6df"
     }
 
     // Creates the DOM object representing a flashcard with the given
