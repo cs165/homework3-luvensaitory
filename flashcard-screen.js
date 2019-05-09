@@ -8,17 +8,17 @@
 // - Adding additional fields
 
 class FlashcardScreen {
-  constructor(containerElement) {
-    this.containerElement = containerElement;
-  }
+    constructor(containerElement, menu) {
+        this.containerElement = containerElement;
+    }
 
-  show() {
-    this.containerElement.classList.remove('inactive');
-    const flashcardContainer = document.querySelector('#flashcard-container');
-    const card = new Flashcard(flashcardContainer, 'word', 'definition');
-  }
+    show(words) {
+        this.containerElement.classList.remove('inactive');
+        const flashcardContainer = document.querySelector('#flashcard-container');
+        const card = new Flashcard(flashcardContainer, 'word', 'definition');
+    }
 
-  hide() {
-    this.containerElement.classList.add('inactive');
-  }
+    hide() {
+        this.containerElement.classList.add('inactive');
+    }
 }
