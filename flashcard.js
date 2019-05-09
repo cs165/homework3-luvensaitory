@@ -10,10 +10,8 @@ class Flashcard {
     constructor(containerElement, frontText, backText) {
         this.containerElement = containerElement;
         this._flipCard = this._flipCard.bind(this);
-
         this.flashcardElement = this._createFlashcardDOM(frontText, backText);
         this.containerElement.append(this.flashcardElement);
-
         this.flashcardElement.addEventListener('pointerup', this._flipCard);
         this.cardStart = this.cardStart.bind(this);
         this.cardDrag = this.cardDrag.bind(this);
@@ -88,6 +86,7 @@ class Flashcard {
     // and returns a reference to the root of that snippet, i.e. the
     // <div class="flashcard-box">
     _createFlashcardDOM(frontText, backText) {
+
         const cardContainer = document.createElement('div');
         cardContainer.classList.add('flashcard-box');
         cardContainer.classList.add('show-word');

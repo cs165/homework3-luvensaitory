@@ -15,7 +15,7 @@ class App {
         this.menu = new MenuScreen(menuElement, FLASHCARD_DECKS, this.onClickCallback, this.start);
 
         const mainElement = document.querySelector('#main');
-        this.flashcards = new FlashcardScreen(mainElement, this.menu);
+        this.flashcards = new FlashcardScreen(mainElement, this.words);
 
         const resultElement = document.querySelector('#results');
         this.results = new ResultsScreen(resultElement);
@@ -35,7 +35,7 @@ class App {
     start(status) {
         if (status === true) {
             this.menu.hide();
-            this.flashcards.show(this.words);
+            this.flashcards.show();
         }
     }
 }

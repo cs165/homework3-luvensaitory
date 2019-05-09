@@ -8,8 +8,10 @@
 // - Adding additional fields
 
 class FlashcardScreen {
-    constructor(containerElement, menu) {
+    constructor(containerElement, words) {
         this.containerElement = containerElement;
+        this.menu = menu;
+        this.count = 0;
         this.right = 0;
         this.wrong = 0;
         const R = document.querySelector(".status .correct");
@@ -18,7 +20,7 @@ class FlashcardScreen {
         W.textContent = 0;
     }
 
-    show(words) {
+    show() {
         this.containerElement.classList.remove('inactive');
         const flashcardContainer = document.querySelector('#flashcard-container');
         const card = new Flashcard(flashcardContainer, 'word', 'definition');
