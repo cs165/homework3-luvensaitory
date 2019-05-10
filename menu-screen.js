@@ -30,7 +30,7 @@ class MenuScreen {
             }
         }
         this.onClickCallback(this.deck);
-        this.start(true);
+        this.start('selectTitle');
         this.hide();
     }
 

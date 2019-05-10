@@ -7,12 +7,8 @@
 // - Adding additional fields
 
 class Flashcard {
-    constructor(containerElement, frontText, backText) {
+    constructor(containerElement, words, count, start, pointCallback) {
         this.containerElement = containerElement;
-        this._flipCard = this._flipCard.bind(this);
-        this.flashcardElement = this._createFlashcardDOM(frontText, backText);
-        this.containerElement.append(this.flashcardElement);
-        this.flashcardElement.addEventListener('pointerup', this._flipCard);
         this.cardStart = this.cardStart.bind(this);
         this.cardDrag = this.cardDrag.bind(this);
         this.cardEnd = this.cardEnd.bind(this);
@@ -20,7 +16,15 @@ class Flashcard {
         this.originY = null;
         this.offsetX = 0;
         this.offsetY = 0;
+        this.words = words;
+        this.count = count;
+        this.start = start;
+        this.pointCallback = pointCallback;
         this.cardStarted = false;
+        this._flipCard = this._flipCard.bind(this);
+        this.flashcardElement = this._createFlashcardDOM(words[count][0], words[count][1]);
+        this.containerElement.append(this.flashcardElement);
+        this.flashcardElement.addEventListener('pointerup', this._flipCard);
         this.flashcardElement.addEventListener('pointerdown', this.cardStart);
         this.flashcardElement.addEventListener('pointerup', this.cardEnd);
         this.flashcardElement.addEventListener('pointermove', this.cardDrag);
@@ -42,24 +46,24 @@ class Flashcard {
         event.preventDefault();
         const deltaX = event.clientX - this.originX;
         const deltaY = event.clientY - this.originY;
-        const translateX = deltaX;
-        const translateY = deltaY;
+        this.translateX = deltaX;
+        this.translateY = deltaY;
         // console.log("delX: " + deltaX + " delY: " + deltaY + " tranX: " + translateX + " tranY: " + translateY);
-        event.currentTarget.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) rotate(' + deltaX * 0.2 + 'deg)';
+        event.currentTarget.style.transform = 'translate(' + this.translateX + 'px, ' + this.translateY + 'px) rotate(' + deltaX * 0.2 + 'deg)';
         event.currentTarget.style.rotate
         const tR = document.querySelector(".status .correct");
         const tW = document.querySelector(".status .incorrect");
-        if (translateX >= 150 || translateX <= -150) {
+        if (this.translateX >= 150 || this.translateX <= -150) {
             document.querySelector("body").style.backgroundColor = "#97b7b7";
-            if (translateX >= 150) {
+            if (this.translateX >= 150) {
                 tR.textContent = parseInt(this.tempRight) + 1;
             } else {
                 tW.textContent = parseInt(this.tempWrong) + 1;
             }
         } else {
             document.querySelector("body").style.backgroundColor = "#d0e6df";
-            tR.textContent = this.tempRight;
-            tW.textContent = this.tempWrong;
+            tR.textContent = parseInt(this.tempRight);
+            tW.textContent = parseInt(this.tempWrong);
         }
     }
     cardEnd(event) {
@@ -68,8 +72,23 @@ class Flashcard {
         this.offsetY += event.clientY - this.originY;
         event.currentTarget.style.transform = 'translate(' + 0 + 'px, ' + 0 + 'px)';
         event.currentTarget.style.transitionDuration = '0.6s';
-        this.flashcardElement.addEventListener('pointerup', this._flipCard);
-        document.querySelector("body").style.backgroundColor = "#d0e6df"
+        if (this.translateX >= 150 || this.translateX <= -150) {
+            this.count++;
+            if (this.count < this.words.length) {
+                const temp = this.containerElement.querySelector(".flashcard-box");
+                this.containerElement.removeChild(temp);
+                const flashcardContainer = document.querySelector('#flashcard-container');
+                const card = new Flashcard(flashcardContainer, this.words, this.count, this.start, this.pointCallback);
+            } else {
+                const tR = document.querySelector(".status .correct");
+                const tW = document.querySelector(".status .incorrect");
+                this.pointCallback(parseInt(tR.textContent), parseInt(tW.textContent));
+                this.start('wordsDone');
+            }
+        } else {
+            this.flashcardElement.addEventListener('pointerup', this._flipCard);
+        }
+        document.querySelector("body").style.backgroundColor = "#d0e6df";
     }
 
     // Creates the DOM object representing a flashcard with the given

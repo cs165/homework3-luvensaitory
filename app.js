@@ -14,11 +14,10 @@ class App {
         const menuElement = document.querySelector('#menu');
         this.menu = new MenuScreen(menuElement, FLASHCARD_DECKS, this.onClickCallback, this.start);
 
-        const mainElement = document.querySelector('#main');
-        this.flashcards = new FlashcardScreen(mainElement, this.words);
+        this.mainElement = document.querySelector('#main');
 
-        const resultElement = document.querySelector('#results');
-        this.results = new ResultsScreen(resultElement);
+        this.resultElement = document.querySelector('#results');
+
 
         // Uncomment this pair of lines to see the "flashcard" screen:
         // this.menu.hide();
@@ -31,11 +30,20 @@ class App {
     onClickCallback(card) {
         this.title = card.title;
         this.words = card.words;
+        this.flashcards = new FlashcardScreen(this.mainElement, this.words, this.start);
     }
     start(status) {
-        if (status === true) {
+        if (status === 'selectTitle') {
             this.menu.hide();
             this.flashcards.show();
+        } else if (status === 'wordsDone') {
+            this.flashcards.hide();
+            console.log(this.flashcards.right, this.flashcards.wrong);
+            this.results = new ResultsScreen(this.resultElement, this.start);
+            this.results.show(this.flashcards.right, this.flashcards.wrong);
+        } else if (status === 'reload') {
+            this.results.hide();
+            this.menu.show();
         }
     }
 }
