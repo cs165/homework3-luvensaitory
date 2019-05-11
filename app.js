@@ -33,17 +33,52 @@ class App {
         this.flashcards = new FlashcardScreen(this.mainElement, this.words, this.start);
     }
     start(status) {
+        let temp;
         if (status === 'selectTitle') {
-            this.menu.hide();
             this.flashcards.show();
         } else if (status === 'wordsDone') {
             this.flashcards.hide();
-            console.log(this.flashcards.right, this.flashcards.wrong);
             this.results = new ResultsScreen(this.resultElement, this.start);
-            this.results.show(this.flashcards.right, this.flashcards.wrong);
+            this.results.show(this.flashcards.total, this.flashcards.wrong);
         } else if (status === 'reload') {
             this.results.hide();
+            temp = document.querySelector('#flashcard-container');
+            temp.innerHTML = '';
             this.menu.show();
+        } else if (status === 'startOver') {
+            temp = document.querySelector(".status .correct");
+            temp.textContent = 0;
+            temp = document.querySelector(".status .incorrect");
+            temp.textContent = 0;
+            temp = document.querySelector('#flashcard-container');
+            temp.innerHTML = '';
+            this.results.hide();
+            this.flashcards = new FlashcardScreen(this.mainElement, this.words, this.start);
+            this.flashcards.show();
+        } else {
+            temp = document.querySelector(".status .correct");
+            temp.textContent = 0;
+            temp = document.querySelector(".status .incorrect");
+            temp.textContent = 0;
+            temp = document.querySelector('#flashcard-container');
+            temp.innerHTML = '';
+            this.results.hide();
+            this.flashcards.wrong = 0;
+            let right = this.flashcards.right;
+            const wrongAnswer = this.flashcards.wrongAnswer;
+            temp = 0;
+            for (let i = 0; i < this.flashcards.wrongAnswer.length; i++) {
+                if (this.flashcards.wrongAnswer[i] == 0) {
+                    temp = i;
+                    break;
+                }
+            }
+            let total = this.flashcards.total;
+            this.flashcards = new FlashcardScreen(this.mainElement, this.words, this.start);
+            this.flashcards.wrongAnswer = wrongAnswer;
+            this.flashcards.startNum = temp;
+            this.flashcards.total = total;
+            this.flashcards.show();
         }
     }
 }

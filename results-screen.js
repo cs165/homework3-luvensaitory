@@ -11,31 +11,43 @@ class ResultsScreen {
         this.containerElement = containerElement;
         this.start = start;
         this.show = this.show.bind(this);
-        this.onClickReload = this.onClickReload.bind(this);
+        this.back2Menu = this.back2Menu.bind(this);
+        this.startOver = this.startOver.bind(this);
+        this.continue = this.continue.bind(this);
     }
 
-    onClickReload() {
+    continue () {
+        this.start('continue');
+    }
+
+    startOver() {
+        this.start('startOver');
+    }
+
+    back2Menu() {
         this.start('reload');
-        this.containerElement.removeEventListener('click', this.onClickReload);
     }
 
-    show(numberCorrect, numberWrong) {
+    show(numberTotal, numberWrong) {
+        let numberCorrect = numberTotal - numberWrong;
         this.containerElement.classList.remove('inactive');
         const percent = this.containerElement.querySelector('.percent');
         const aaa = Math.round(numberCorrect * 100 / (numberCorrect + numberWrong));
-        console.log(numberCorrect, numberWrong, aaa);
         percent.textContent = aaa;
         const correct = this.containerElement.querySelector('.correct');
         correct.textContent = numberCorrect;
         const incorrect = this.containerElement.querySelector('.incorrect');
         incorrect.textContent = numberWrong;
-        console.log(aaa);
+        const back = this.containerElement.querySelector('.to-menu');
+        back.addEventListener('click', this.back2Menu);
         if (aaa === 100) {
             const button = this.containerElement.querySelector('.continue');
             button.textContent = 'Start over?';
-            button.addEventListener('click', this.onClickReload);
+            button.addEventListener('click', this.startOver);
         } else {
-
+            const button = this.containerElement.querySelector('.continue');
+            button.textContent = 'Continue';
+            button.addEventListener('click', this.continue)
         }
     }
 

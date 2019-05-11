@@ -15,14 +15,18 @@ class FlashcardScreen {
         this.count = 0;
         this.right = 0;
         this.wrong = 0;
+        this.total = Object.keys(words).length;
+        this.startNum = 0;
+        this.wrongAnswer = [];
+        for (let i = 0; i < Object.keys(words).length; i++) {
+            this.wrongAnswer.push(0);
+        }
         this.start = start;
         this.words = [];
         for (let w in words) {
             let temp = [];
             temp.push(w);
             temp.push(words[w]);
-            temp.push(0);
-            temp.push(0);
             this.words.push(temp);
         }
         const R = document.querySelector(".status .correct");
@@ -39,7 +43,7 @@ class FlashcardScreen {
     show() {
         this.containerElement.classList.remove('inactive');
         const flashcardContainer = document.querySelector('#flashcard-container');
-        const card = new Flashcard(flashcardContainer, this.words, 0, this.start, this.pointCallback);
+        const card = new Flashcard(flashcardContainer, this.words, this.startNum, this.start, this.pointCallback, this.wrongAnswer);
     }
 
     hide() {

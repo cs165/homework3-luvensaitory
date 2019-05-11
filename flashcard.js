@@ -7,7 +7,7 @@
 // - Adding additional fields
 
 class Flashcard {
-    constructor(containerElement, words, count, start, pointCallback) {
+    constructor(containerElement, words, count, start, pointCallback, wrongAnswer) {
         this.containerElement = containerElement;
         this.cardStart = this.cardStart.bind(this);
         this.cardDrag = this.cardDrag.bind(this);
@@ -16,6 +16,7 @@ class Flashcard {
         this.originY = null;
         this.offsetX = 0;
         this.offsetY = 0;
+        this.wrongAnswer = wrongAnswer;
         this.words = words;
         this.count = count;
         this.start = start;
@@ -29,6 +30,7 @@ class Flashcard {
         this.flashcardElement.addEventListener('pointerup', this.cardEnd);
         this.flashcardElement.addEventListener('pointermove', this.cardDrag);
     }
+
     cardStart(event) {
         this.originX = event.clientX;
         this.originY = event.clientY;
@@ -48,7 +50,6 @@ class Flashcard {
         const deltaY = event.clientY - this.originY;
         this.translateX = deltaX;
         this.translateY = deltaY;
-        // console.log("delX: " + deltaX + " delY: " + deltaY + " tranX: " + translateX + " tranY: " + translateY);
         event.currentTarget.style.transform = 'translate(' + this.translateX + 'px, ' + this.translateY + 'px) rotate(' + deltaX * 0.2 + 'deg)';
         event.currentTarget.style.rotate
         const tR = document.querySelector(".status .correct");
@@ -75,10 +76,22 @@ class Flashcard {
         if (this.translateX >= 150 || this.translateX <= -150) {
             this.count++;
             if (this.count < this.words.length) {
+                if (this.translateX >= 150) {
+                    this.wrongAnswer[this.count - 1] = 1;
+                } else {
+                    this.wrongAnswer[this.count - 1] = 0;
+                }
+                while (this.count < this.words.length) {
+                    if (this.wrongAnswer[this.count] === 1) {
+                        this.count++;
+                    } else {
+                        break;
+                    }
+                }
                 const temp = this.containerElement.querySelector(".flashcard-box");
                 this.containerElement.removeChild(temp);
                 const flashcardContainer = document.querySelector('#flashcard-container');
-                const card = new Flashcard(flashcardContainer, this.words, this.count, this.start, this.pointCallback);
+                const card = new Flashcard(flashcardContainer, this.words, this.count, this.start, this.pointCallback, this.wrongAnswer);
             } else {
                 const tR = document.querySelector(".status .correct");
                 const tW = document.querySelector(".status .incorrect");
